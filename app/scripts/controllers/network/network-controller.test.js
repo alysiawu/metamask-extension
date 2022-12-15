@@ -1,5 +1,5 @@
-import sinon from 'sinon';
 import nock from 'nock';
+import { deferredPromise } from '../../lib/util';
 import { NETWORK_TO_NAME_MAP } from '../../../../shared/constants/network';
 import NetworkController, { NETWORK_EVENTS } from './network-controller';
 
@@ -20,7 +20,7 @@ function constructSuccessfulRpcResponse(result) {
 }
 
 // Example block taken from Ethereum Mainnet
-const BLOCK = {
+const PRE_1559_BLOCK = {
   baseFeePerGas: '0x63c498a46',
   difficulty: '0x0',
   extraData: '0x',
@@ -52,22 +52,32 @@ const BLOCK = {
     '0x98bbdfbe1074bc3aa72a77a281f16d6ba7e723d68f15937d80954fb34d323369',
   uncles: [],
 };
+const BLOCK = {
+  ...PRE_1559_BLOCK,
+  baseFeePerGas: '0x63c498a46',
+};
+
+function constructRpcResponse(result) {
+  return {
+    id: 1,
+    jsonrpc: '2.0',
+    result,
+  };
+}
 
 describe('NetworkController', () => {
   describe('controller', () => {
     let networkController;
-    let getLatestBlockStub;
     let setProviderTypeAndWait;
     const noop = () => undefined;
     const networkControllerProviderConfig = {
       getAccounts: noop,
     };
+    let latestBlock;
 
     beforeEach(() => {
+      latestBlock = BLOCK;
       networkController = new NetworkController({ infuraProjectId: 'foo' });
-      getLatestBlockStub = sinon
-        .stub(networkController, '_getLatestBlock')
-        .callsFake(() => Promise.resolve({}));
       setProviderTypeAndWait = () =>
         new Promise((resolve) => {
           networkController.on(NETWORK_EVENTS.NETWORK_DID_CHANGE, () => {
@@ -75,17 +85,26 @@ describe('NetworkController', () => {
           });
           networkController.setProviderType('mainnet');
         });
+      nock('http://localhost:8545')
+        .persist()
+        .post(/.*/u)
+        .reply(200, () => JSON.stringify(constructRpcResponse(latestBlock)));
+      nock('https://mainnet.infura.io')
+        .persist()
+        .post('/v3/foo')
+        .reply(200, () => JSON.stringify(constructRpcResponse(latestBlock)));
     });
 
     afterEach(() => {
-      getLatestBlockStub.reset();
       networkController.destroy();
       nock.cleanAll();
     });
 
     describe('#provider', () => {
-      it('provider should be updatable without reassignment', () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
+      it('provider should be updatable without reassignment', async () => {
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
+        );
         const providerProxy =
           networkController.getProviderAndBlockTracker().provider;
         expect(providerProxy.test).toBeUndefined();
@@ -126,36 +145,44 @@ describe('NetworkController', () => {
     });
 
     describe('#setProviderType', () => {
-      it('should update provider.type', () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
+      it('should update provider.type', async () => {
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
+        );
         networkController.setProviderType('mainnet');
         const { type } = networkController.getProviderConfig();
         expect(type).toStrictEqual('mainnet');
       });
 
-      it('should set the network to loading', () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
+      it('should set the network to loading', async () => {
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
+        );
 
-        const spy = sinon.spy(networkController, '_setNetworkState');
         networkController.setProviderType('mainnet');
+        const { promise: networkIdChanged, resolve } = deferredPromise();
+        networkController.networkStore.subscribe(resolve);
 
-        expect(spy.callCount).toStrictEqual(1);
-        expect(spy.calledOnceWithExactly('loading')).toStrictEqual(true);
+        expect(networkController.networkStore.getState()).toBe('loading');
+        await networkIdChanged;
+        expect(networkController.networkStore.getState()).toBe('1');
       });
     });
 
     describe('#getEIP1559Compatibility', () => {
       it('should return false when baseFeePerGas is not in the block header', async () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
+        latestBlock = PRE_1559_BLOCK;
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
+        );
         const supportsEIP1559 =
           await networkController.getEIP1559Compatibility();
         expect(supportsEIP1559).toStrictEqual(false);
       });
 
       it('should return true when baseFeePerGas is in block header', async () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
-        getLatestBlockStub.callsFake(() =>
-          Promise.resolve({ baseFeePerGas: '0xa ' }),
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
         );
         const supportsEIP1559 =
           await networkController.getEIP1559Compatibility();
@@ -163,28 +190,25 @@ describe('NetworkController', () => {
       });
 
       it('should store EIP1559 support in state to reduce calls to _getLatestBlock', async () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
-        getLatestBlockStub.callsFake(() =>
-          Promise.resolve({ baseFeePerGas: '0xa ' }),
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
         );
         await networkController.getEIP1559Compatibility();
         const supportsEIP1559 =
           await networkController.getEIP1559Compatibility();
-        expect(getLatestBlockStub.calledOnce).toStrictEqual(true);
         expect(supportsEIP1559).toStrictEqual(true);
       });
 
       it('should clear stored EIP1559 support when changing networks', async () => {
-        networkController.initializeProvider(networkControllerProviderConfig);
-        networkController.consoleThis = true;
-        getLatestBlockStub.callsFake(() =>
-          Promise.resolve({ baseFeePerGas: '0xa ' }),
+        await networkController.initializeProvider(
+          networkControllerProviderConfig,
         );
+        networkController.consoleThis = true;
         await networkController.getEIP1559Compatibility();
         expect(
           networkController.networkDetails.getState().EIPS[1559],
         ).toStrictEqual(true);
-        getLatestBlockStub.callsFake(() => Promise.resolve({}));
+        latestBlock = PRE_1559_BLOCK;
         await setProviderTypeAndWait('mainnet');
         expect(
           networkController.networkDetails.getState().EIPS[1559],
@@ -193,7 +217,6 @@ describe('NetworkController', () => {
         expect(
           networkController.networkDetails.getState().EIPS[1559],
         ).toStrictEqual(false);
-        expect(getLatestBlockStub.calledTwice).toStrictEqual(true);
       });
     });
   });
