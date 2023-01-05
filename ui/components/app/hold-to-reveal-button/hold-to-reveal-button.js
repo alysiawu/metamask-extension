@@ -74,11 +74,9 @@ export default function HoldToRevealButton({ buttonText, onLongPressed }) {
   const renderPreCompleteContent = useCallback(() => {
     return (
       <Box
-        className={`hold-to-reveal-button__absolute-fill ${
-          isUnlocking ? 'hold-to-reveal-button__invisible' : null
-        } ${
-          hasTriggeredUnlock ? 'hold-to-reveal-button__main-icon-show' : null
-        }`}
+        className={`hold-to-reveal-button__absolute-fill ${isUnlocking ? 'hold-to-reveal-button__invisible' : null
+          } ${hasTriggeredUnlock ? 'hold-to-reveal-button__main-icon-show' : null
+          }`}
       >
         <Box className="hold-to-reveal-button__absolute-fill">
           <svg className="hold-to-reveal-button__circle-svg">
@@ -120,9 +118,8 @@ export default function HoldToRevealButton({ buttonText, onLongPressed }) {
   const renderPostCompleteContent = useCallback(() => {
     return isUnlocking ? (
       <div
-        className={`hold-to-reveal-button__absolute-fill ${
-          hasTriggeredUnlock ? 'hold-to-reveal-button__unlock-icon-hide' : null
-        }`}
+        className={`hold-to-reveal-button__absolute-fill ${hasTriggeredUnlock ? 'hold-to-reveal-button__unlock-icon-hide' : null
+          }`}
         onAnimationEnd={resetAnimationStates}
       >
         <div
