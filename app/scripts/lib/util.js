@@ -1,6 +1,8 @@
 import browser from 'webextension-polyfill';
 import BN from 'bn.js';
 import { memoize } from 'lodash';
+import { wordlist as englishWordlist } from '@metamask/scure-bip39/dist/wordlists/english';
+
 import { CHAIN_IDS, TEST_CHAINS } from '../../../shared/constants/network';
 
 import {
@@ -298,4 +300,18 @@ export function formatTxMetaForRpcResult(txMeta) {
   }
 
   return formattedTxMeta;
+}
+
+/**
+ * Convert a mnemonic formatted as a Uint8Array into a string.
+ *
+ * @param {Uint8Array} mnemonic - a mnemonic in Uint8Array format
+ * @returns {string} the mnemonic in string form.
+ */
+export function uint8ArrayMnemonicToString(mnemonic) {
+  const recoveredIndices = Array.from(
+    new Uint16Array(new Uint8Array(mnemonic).buffer),
+  );
+
+  return recoveredIndices.map((i) => englishWordlist[i]).join(' ');
 }

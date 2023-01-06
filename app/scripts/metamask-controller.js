@@ -60,8 +60,6 @@ import {
 } from '@metamask/snaps-controllers';
 ///: END:ONLY_INCLUDE_IN
 
-import { wordlist as englishWordlist } from '@metamask/scure-bip39/dist/wordlists/english';
-
 import browser from 'webextension-polyfill';
 import {
   ASSET_TYPES,
@@ -150,7 +148,10 @@ import seedPhraseVerifier from './lib/seed-phrase-verifier';
 import MetaMetricsController from './controllers/metametrics';
 import { segment } from './lib/segment';
 import createMetaRPCHandler from './lib/createMetaRPCHandler';
-import { previousValueComparator } from './lib/util';
+import {
+  previousValueComparator,
+  uint8ArrayMnemonicToString,
+} from './lib/util';
 import createMetamaskMiddleware from './lib/createMetamaskMiddleware';
 
 import {
@@ -2501,7 +2502,7 @@ export default class MetamaskController extends EventEmitter {
   }
 
   /**
-   * Gets the mnemonic of the user's primary keyring.
+   * Gets the mnemonic of the user's primary keyring as a string.
    */
   getPrimaryKeyringMnemonic() {
     const [keyring] = this.keyringController.getKeyringsByType(
@@ -2510,17 +2511,12 @@ export default class MetamaskController extends EventEmitter {
     if (!keyring.mnemonic) {
       throw new Error('Primary keyring mnemonic unavailable.');
     }
-
-    const recoveredIndices = Array.from(
-      new Uint16Array(new Uint8Array(keyring.mnemonic).buffer),
-    );
-    return recoveredIndices.map((i) => englishWordlist[i]).join(' ');
+    return uint8ArrayMnemonicToString(keyring.mnemonic);
   }
 
   //
   // Hardware
   //
-
   async getKeyringForDevice(deviceName, hdPath = null) {
     let keyringName = null;
     switch (deviceName) {
@@ -2782,8 +2778,7 @@ export default class MetamaskController extends EventEmitter {
    *
    * Called when the first account is created and on unlocking the vault.
    *
-   * @returns {Promise<number[]>} The seed phrase to be confirmed by the user,
-   * encoded as an array of UTF-8 bytes.
+   * @returns {Promise<string>} The seed phrase to be confirmed by the user in string format
    */
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(
@@ -2802,10 +2797,8 @@ export default class MetamaskController extends EventEmitter {
 
     try {
       await seedPhraseVerifier.verifyAccounts(accounts, serialized.mnemonic);
-      const recoveredIndices = Array.from(
-        new Uint16Array(new Uint8Array(serialized.mnemonic).buffer),
-      );
-      return recoveredIndices.map((i) => englishWordlist[i]).join(' ');
+
+      return uint8ArrayMnemonicToString(serialized.mnemonic);
     } catch (err) {
       log.error(err.message);
       throw err;
