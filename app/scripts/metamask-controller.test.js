@@ -6,6 +6,7 @@ import { obj as createThoughStream } from 'through2';
 import EthQuery from 'eth-query';
 import proxyquire from 'proxyquire';
 import browser from 'webextension-polyfill';
+import { wordlist as englishWordlist } from '@metamask/scure-bip39/dist/wordlists/english';
 import { TRANSACTION_STATUSES } from '../../shared/constants/transaction';
 import createTxMeta from '../../test/lib/createTxMeta';
 import { NETWORK_TYPES } from '../../shared/constants/network';
@@ -507,6 +508,31 @@ describe('MetaMaskController', function () {
         [KEYRING_TYPES.LEDGER],
       );
       assert.equal(keyrings.length, 1);
+    });
+  });
+
+  describe('getPrimaryKeyringMnemonic', function () {
+    it('should return a mnemonic as a string', function () {
+      const mockMnemonic =
+        'above mercy benefit hospital call oval domain student sphere interest argue shock';
+      const mnemonicIndices = mockMnemonic
+        .split(' ')
+        .map((word) => englishWordlist.indexOf(word));
+      const uint8ArrayMnemonic = new Uint8Array(
+        new Uint16Array(mnemonicIndices).buffer,
+      );
+
+      const mockHDKeyring = {
+        type: 'HD Key Tree',
+        mnemonic: uint8ArrayMnemonic,
+      };
+      sinon
+        .stub(metamaskController.keyringController, 'getKeyringsByType')
+        .returns([mockHDKeyring]);
+
+      const recoveredMnemonic = metamaskController.getPrimaryKeyringMnemonic();
+
+      assert.equal(recoveredMnemonic, mockMnemonic);
     });
   });
 
