@@ -99,6 +99,10 @@ workflows:
       - test-unit-global:
           requires:
             - prep-deps
+      - test-storybook:
+          requires:
+            - prep-deps
+            - prep-build-storybook
       - validate-source-maps:
           requires:
             - prep-build
@@ -139,6 +143,7 @@ workflows:
             - test-e2e-firefox
             - test-e2e-chrome-snaps
             - test-e2e-firefox-snaps
+            - test-storybook
       - benchmark:
           requires:
             - prep-build-test
@@ -495,6 +500,16 @@ jobs:
       - run:
           name: Verify locales
           command: yarn verify-locales --quiet
+
+  test-storybook:
+    executor: node-browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Test Storybook
+          command: yarn test-storybook
 
   test-lint-shellcheck:
     executor: shellcheck
