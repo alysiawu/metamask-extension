@@ -12,6 +12,6 @@ export function getCaretCoordinates(element, position) {
     top: span.offsetTop + parseInt(computed.borderTopWidth, 10),
     left: span.offsetLeft + parseInt(computed.borderLeftWidth, 10),
   };
-  document.body.removeChild(div);
+  document.body.remove(div);
   return coordinates;
 }
