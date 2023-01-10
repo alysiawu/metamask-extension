@@ -464,41 +464,8 @@
     },
     "@metamask/address-book-controller": {
       "packages": {
-        "@ethereumjs/common": true,
-        "@ethereumjs/tx": true,
-        "@metamask/contract-metadata": true,
-        "@metamask/controllers>@ethersproject/abi": true,
-        "@metamask/controllers>@ethersproject/contracts": true,
-        "@metamask/controllers>@ethersproject/providers": true,
-        "@metamask/controllers>abort-controller": true,
-        "@metamask/controllers>async-mutex": true,
-        "@metamask/controllers>eth-json-rpc-infura": true,
-        "@metamask/controllers>eth-method-registry": true,
-        "@metamask/controllers>eth-phishing-detect": true,
-        "@metamask/controllers>ethereumjs-wallet": true,
-        "@metamask/controllers>isomorphic-fetch": true,
-        "@metamask/controllers>multiformats": true,
-        "@metamask/controllers>nanoid": true,
-        "@metamask/controllers>web3": true,
-        "@metamask/controllers>web3-provider-engine": true,
-        "@metamask/metamask-eth-abis": true,
-        "browserify>buffer": true,
-        "browserify>events": true,
-        "deep-freeze-strict": true,
-        "eslint>fast-deep-equal": true,
-        "eth-ens-namehash": true,
-        "eth-keyring-controller": true,
-        "eth-query": true,
-        "eth-rpc-errors": true,
-        "eth-sig-util": true,
-        "ethereumjs-util": true,
-        "ethjs>ethjs-unit": true,
-        "immer": true,
-        "json-rpc-engine": true,
-        "jsonschema": true,
-        "punycode": true,
-        "single-call-balance-checker-abi": true,
-        "uuid": true
+        "@metamask/address-book-controller>@metamask/base-controller": true,
+        "@metamask/controller-utils": true
       }
     },
     "@metamask/address-book-controller>@metamask/base-controller": {
@@ -543,12 +510,12 @@
         "@ethersproject/providers": true,
         "@metamask/assets-controllers>@metamask/contract-metadata": true,
         "@metamask/assets-controllers>abort-controller": true,
-        "@metamask/assets-controllers>async-mutex": true,
         "@metamask/assets-controllers>multiformats": true,
         "@metamask/base-controller": true,
         "@metamask/controller-utils": true,
         "@metamask/metamask-eth-abis": true,
         "browserify>events": true,
+        "eth-json-rpc-filters>async-mutex": true,
         "eth-query": true,
         "eth-rpc-errors": true,
         "ethereumjs-util": true,
@@ -562,23 +529,14 @@
         "AbortController": true
       }
     },
-    "@metamask/controllers>async-mutex": {
+    "@metamask/assets-controllers>multiformats": {
       "globals": {
-        "setTimeout": true
-      },
-      "packages": {
-        "@metamask/controllers>async-mutex>tslib": true
+        "TextDecoder": true,
+        "TextEncoder": true,
+        "console.warn": true
       }
     },
-    "@metamask/controllers>async-mutex>tslib": {
-      "globals": {
-        "define": true
-      }
-    },
-    "@metamask/controllers>eth-json-rpc-infura": {
-      "globals": {
-        "setTimeout": true
-      },
+    "@metamask/base-controller": {
       "packages": {
         "immer": true
       }
@@ -927,6 +885,7 @@
         "@metamask/gas-fee-controller>@metamask/network-controller>eth-json-rpc-infura": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>backoff": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-block-tracker": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-filters": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-middleware": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-sig-util": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>ethereumjs-util": true,
@@ -935,7 +894,6 @@
         "browserify>buffer": true,
         "browserify>events": true,
         "browserify>util": true,
-        "eth-json-rpc-filters": true,
         "gh-pages>async": true,
         "lavamoat>json-stable-stringify": true,
         "watchify>xtend": true
@@ -969,6 +927,21 @@
         "safe-event-emitter": true
       }
     },
+    "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-filters": {
+      "globals": {
+        "console.error": true,
+        "results": "write"
+      },
+      "packages": {
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-block-tracker>pify": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-filters>json-rpc-engine": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-filters>lodash.flatmap": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-middleware": true,
+        "await-semaphore": true,
+        "eth-query": true,
+        "safe-event-emitter": true
+      }
+    },
     "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-middleware": {
       "globals": {
         "console.error": true,
@@ -976,7 +949,7 @@
         "setTimeout": true
       },
       "packages": {
-        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-middleware>json-rpc-engine": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-json-rpc-filters>json-rpc-engine": true,
         "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine>eth-rpc-errors": true,
         "browserify>url": true,
         "lavamoat>json-stable-stringify": true,
@@ -1225,15 +1198,13 @@
       "packages": {
         "@ethereumjs/common": true,
         "@ethereumjs/tx": true,
-        "@metamask/contract-metadata": true,
-        "@metamask/controllers>abort-controller": true,
-        "@metamask/controllers>async-mutex": true,
-        "@metamask/controllers>eth-json-rpc-infura": true,
-        "@metamask/controllers>eth-phishing-detect": true,
-        "@metamask/controllers>isomorphic-fetch": true,
-        "@metamask/controllers>multiformats": true,
-        "@metamask/controllers>web3": true,
-        "@metamask/controllers>web3-provider-engine": true,
+        "@ethersproject/contracts": true,
+        "@ethersproject/providers": true,
+        "@metamask/assets-controllers>abort-controller": true,
+        "@metamask/assets-controllers>multiformats": true,
+        "@metamask/controller-utils>isomorphic-fetch": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>eth-json-rpc-infura": true,
+        "@metamask/gas-fee-controller>@metamask/network-controller>web3-provider-engine": true,
         "@metamask/metamask-eth-abis": true,
         "@metamask/phishing-controller>eth-phishing-detect": true,
         "@metamask/smart-transactions-controller>@metamask/controllers>@metamask/contract-metadata": true,
@@ -1247,7 +1218,7 @@
         "deep-freeze-strict": true,
         "eslint>fast-deep-equal": true,
         "eth-ens-namehash": true,
-        "eth-keyring-controller": true,
+        "eth-json-rpc-filters>async-mutex": true,
         "eth-query": true,
         "eth-rpc-errors": true,
         "eth-sig-util": true,
@@ -2491,12 +2462,7 @@
         "setTimeout": true
       },
       "packages": {
-        "eth-json-rpc-filters>async-mutex>tslib": true
-      }
-    },
-    "eth-json-rpc-filters>async-mutex>tslib": {
-      "globals": {
-        "define": true
+        "enzyme>cheerio>tslib": true
       }
     },
     "eth-json-rpc-filters>eth-json-rpc-middleware": {
