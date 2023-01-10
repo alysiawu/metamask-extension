@@ -2101,6 +2101,9 @@
   "mobileSyncWarning": {
     "message": "Ang feature na 'I-sync gamit ang extension' ay pansamantalang hindi gumagana. Kung gusto mong gamitin ang iyong extension wallet sa MetaMask mobile, pagkatapos ay sa iyong mobile app: bumalik sa mga opsyon sa pag-setup ng wallet at piliin ang opsyong 'Mag-import gamit ang Secret Recovery Phrase'. Gamitin ang lihim na parirala ng iyong extension wallet upang pagkatapos ay i-import ang iyong wallet sa mobile."
   },
+  "moreComingSoon": {
+    "message": "Marami pang parating..."
+  },
   "mustSelectOne": {
     "message": "Dapat pumili ng kahit 1 token lang."
   },
@@ -2686,6 +2689,9 @@
   "openInBlockExplorer": {
     "message": "Buksan sa block explorer"
   },
+  "openSea": {
+    "message": "OpenSea na (Beta)"
+  },
   "optional": {
     "message": "Opsyonal"
   },
@@ -3236,6 +3242,9 @@
   },
   "selectPathHelp": {
     "message": "Kung hindi mo makita ang mga account na inaasahan mo, subukang ilipat sa HD path."
+  },
+  "selectProvider": {
+    "message": "Pumili ng provider:"
   },
   "selectType": {
     "message": "Pumili ng Uri"
@@ -4084,6 +4093,9 @@
   },
   "thingsToKeep": {
     "message": "Mga bagay na dapat tandaan:"
+  },
+  "thisServiceIsExperimental": {
+    "message": "Eksperimental ang serbisyong ito"
   },
   "thisWillCreate": {
     "message": "Gagawa ito ng bagong wallet at Secret Recovery Phrase"

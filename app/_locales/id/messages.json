@@ -2101,6 +2101,9 @@
   "mobileSyncWarning": {
     "message": "Fitur 'Sinkronkan dengan ekstensi' dinonaktifkan untuk sementara waktu. Jika Anda ingin menggunakan dompet ekstensi Anda di ponsel MetaMask, maka pada aplikasi seluler Anda: kembali ke opsi pengaturan dompet dan pilih opsi 'Impor dengan Frasa Pemulihan Rahasia'. Gunakan frasa rahasia dompet ekstensi Anda untuk mengimpor dompet Anda ke ponsel nantinya."
   },
+  "moreComingSoon": {
+    "message": "Selanjutnya akan segera hadir..."
+  },
   "mustSelectOne": {
     "message": "Harus memilih minimal 1 token."
   },
@@ -2686,6 +2689,9 @@
   "openInBlockExplorer": {
     "message": "Buka di block explorer"
   },
+  "openSea": {
+    "message": "OpenSea (Beta)"
+  },
   "optional": {
     "message": "Opsional"
   },
@@ -3236,6 +3242,9 @@
   },
   "selectPathHelp": {
     "message": "Jika Anda tidak menemukan akun yang diharapkan, coba alihkan jalur HD."
+  },
+  "selectProvider": {
+    "message": "Pilih penyedia:"
   },
   "selectType": {
     "message": "Pilih Jenis"
@@ -4084,6 +4093,9 @@
   },
   "thingsToKeep": {
     "message": "Hal-hal yang perlu diingat:"
+  },
+  "thisServiceIsExperimental": {
+    "message": "Layanan ini bersifat eksperimental"
   },
   "thisWillCreate": {
     "message": "Ini akan membuat Frasa Pemulihan Rahasia dan dompet baru"
